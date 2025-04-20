@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Tolotro Club Manager</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+<div class="container py-4">
+  <h2 class="mb-4 text-center text-warning">TOLOTRO CLUB</h2>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{category}}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+  <div class="text-center mb-4">
+    <img src="/static/images/tolotro_logo.png" alt="Tolotro Club Logo" class="img-fluid" style="max-height: 150px;">
+  </div>
+  <form method="post" class="mb-4">
+    <div class="row g-2">
+      <div class="col">
+        <input type="text" class="form-control" name="register_name" placeholder="Register for this Meeting (enter your name)">
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-primary" name="action" value="register">Register</button>
+      </div>
+    </div>
+  </form>
+
+  <form method="post" class="mb-4">
+    <div class="row g-2">
+      <div class="col">
+        <select class="form-select" name="user">
+          <option value="">Select your name</option>
+          {% for user in users %}
+            <option value="{{ user }}">{{ user }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col">
+        <select class="form-select" name="role">
+          <option value="">Reserve a Role</option>
+          {% for role in roles %}
+            <option value="{{ role }}">{{ role }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-success" name="action" value="reserve">Reserve Role</button>
+      </div>
+    </div>
+  </form>
+
+  <form method="post" class="mb-4">
+    <div class="row g-2">
+      <div class="col">
+        <select class="form-select" name="user">
+          <option value="">Select your name</option>
+          {% for user in users %}
+            <option value="{{ user }}">{{ user }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col">
+        <select class="form-select" name="cancel_role">
+          <option value="">Select your reserved role to cancel</option>
+          {% for user in users %}
+            {% for role in user_roles[user] %}
+              <option value="{{ role }}">{{ role }} ({{ user }})</option>
+            {% endfor %}
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-danger" name="action" value="cancel">Cancel Reservation</button>
+      </div>
+    </div>
+  </form>
+
+  <form method="post" class="mb-4">
+    <div class="row g-2">
+      <div class="col">
+        <select class="form-select" name="vote_category">
+          <option value="">Category</option>
+          {% for cat in vote_categories %}
+            <option value="{{ cat }}">{{ cat }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col">
+        <select class="form-select" name="vote_user">
+          <option value="">Vote for</option>
+          {% for user in users %}
+            <option value="{{ user }}">{{ user }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-warning" name="action" value="vote">Submit Vote</button>
+      </div>
+    </div>
+  </form>
+
+  <h4 class="mt-4 text-warning">Current Reservations</h4>
+  <table class="table table-bordered">
+    <thead><tr><th>Role</th><th>User</th></tr></thead>
+    <tbody>
+      {% for _, row in reservations.iterrows() %}
+        <tr>
+          <td>{{ row['Role'] }}</td>
+          <td>{{ row['User'] or '' }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h4 class="mt-4 text-warning">Voting Results</h4>
+  <table class="table table-bordered">
+    <thead><tr><th>Category</th><th>Winner</th></tr></thead>
+    <tbody>
+      {% for _, row in votes.iterrows() %}
+        <tr>
+          <td>{{ row['Category'] }}</td>
+          <td>{{ row['Winner'] or '' }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h4 class="mt-4 text-secondary">Registered Members</h4>
+  <ul>
+    {% for _, row in registrations.iterrows() %}
+      <li>{{ row['Name'] }}</li>
+    {% endfor %}
+  </ul>
+</div>
+</body>
+</html>
